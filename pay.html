@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EasyTips Payment</title>
+</head>
+<body>
+  <h1>Complete Your Payment</h1>
+  <p id="plan"></p>
+  <form id="paymentForm">
+    <label>Phone Number (Safaricom):</label>
+    <input type="text" id="phone" required>
+    <button type="submit">Pay Now</button>
+  </form>
+  <p id="status"></p>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const plan = urlParams.get("plan");
+    document.getElementById("plan").innerText = `Plan selected: ${plan}`;
+
+    document.getElementById("paymentForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const phone = document.getElementById("phone").value;
+
+      const res = await fetch("/api/pay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, plan }),
+      });
+
+      const data = await res.json();
+      document.getElementById("status").innerText = data.message;
+
+      if (data.success) {
+        setTimeout(() => { window.location.href = "tips.html"; }, 10000);
+      }
+    });
+  </script>
+</body>
+</html>
